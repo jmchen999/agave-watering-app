@@ -16,7 +16,9 @@ RECORD_FILE = "records.txt"
 def send_to_google_sheets(data):
     try:
         scope = ["https://www.googleapis.com/auth/spreadsheets"]
-        creds = Credentials.from_service_account_file("credentials.json", scopes=scope)
+        creds_dict = st.secrets["google"]
+        creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
+
         gc = gspread.authorize(creds)
         sh = gc.open_by_key(SPREADSHEET_ID)
         worksheet = sh.worksheet(SHEET_NAME)
@@ -103,7 +105,7 @@ if submit:
         log += "-" * 30 + "\n"
         save_record(log)
 
-        # ✅ 寫入 Google Sheets，並顯示 debug 資訊
+        # ✅ 寫入 Google Sheets，並顯示成功訊息
         send_to_google_sheets({
             "plant_type": plant_type,
             "start_date": start_date.strftime("%Y-%m-%d"),
